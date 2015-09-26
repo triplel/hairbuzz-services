@@ -51,6 +51,8 @@ object HairBuzzStub extends Controller{
           "last_name" -> "Fox",
           "slug" ->  "megan-fox",
           "avatar" -> "https://pbs.twimg.com/profile_images/3061372854/68fb99eb8e7d48180f583c61c1ef2613_bigger.jpeg",
+          "rating" -> 9,
+          "price_rank" -> 2,
           "venue" -> Json.obj(
             "venue_id" ->"V0000000009",
             "venue_name" ->  "Megan's Hair Salon",
@@ -74,6 +76,8 @@ object HairBuzzStub extends Controller{
           "last_name" -> "Stone",
           "slug" ->  "emma-stone",
           "avatar" -> "https://pbs.twimg.com/profile_images/1752229650/icontwit_bigger.png",
+          "rating" -> 8,
+          "price_rank" -> 2,
           "venue" -> Json.obj(
             "venue_id" ->"V0000000002",
             "venue_name" ->  "New Age Hair Studio",
@@ -97,6 +101,8 @@ object HairBuzzStub extends Controller{
           "last_name" -> "Stark",
           "slug" ->  "tony_iron_man",
           "avatar" -> "https://pbs.twimg.com/profile_images/454731838502600704/RvnCcrdC_bigger.jpeg",
+          "rating" -> 7,
+          "price_rank" -> 2,
           "venue" -> Json.obj(
             "venue_id" ->"V0000000003",
             "venue_name" ->  "The Hulk Buster",
@@ -118,5 +124,4 @@ object HairBuzzStub extends Controller{
     )
     Ok(jsonResponse)
   }
-
 }
