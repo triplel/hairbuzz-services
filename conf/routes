@@ -6,12 +6,15 @@
 #GET     /                           controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                 controllers.Assets.at(path="/public", file)
+GET         /                             controllers.HairBuzzStub.index
 
 
+POST        /search/venue                 controllers.SearchController.searchVenue
+POST        /search/stylist               controllers.SearchController.searchStylist
 
-GET         /                   controllers.HairBuzzStub.index
-GET         /users/:hbid        controllers.HairBuzzStub.stubGetUserByID(hbid)
+# Stub services
+GET         /stub/users/:hbid             controllers.HairBuzzStub.stubGetUserByID(hbid)
+POST        /stub/search/stylist          controllers.HairBuzzStub.stubSearchHairStylists
 
 
-POST        /search/stylists    controllers.HairBuzzStub.stubSearchHairStylists
