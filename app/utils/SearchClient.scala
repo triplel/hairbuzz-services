@@ -58,9 +58,9 @@ object SearchClient extends HttpClientBase with FormatSearch{
 			val responseJson = Json.parse(results)
       val total = responseJson.\("hits")\("total")
 			val hitsSeq = (responseJson.\("hits")\("hits")).as[Seq[JsValue]]
-			val resultSeq = hitsSeq.map(x => x.\("_source"))
+			val resultSeq = hitsSeq.map(x => x.\("_source").get)
 			val searchResult = Json.obj(
-				"total"-> total,
+				"total"-> total.get,
 				"count" -> searchInput.limit,
 				"offset" -> searchInput.offset,
 				"results" -> JsArray(resultSeq)
