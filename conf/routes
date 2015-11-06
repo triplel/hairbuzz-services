@@ -6,9 +6,21 @@
 #GET     /                           controllers.Application.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                 controllers.Assets.at(path="/public", file)
-GET         /                             controllers.Application.index
+GET         /assets/*file                   controllers.Assets.at(path="/public", file)
+GET         /                               controllers.Application.index
 
 
-POST        /search/venue                 controllers.SearchController.searchVenue
-POST        /search/stylist               controllers.SearchController.searchStylist
+POST        /search/venue                   controllers.SearchController.searchVenue
+POST        /search/stylist                 controllers.SearchController.searchStylist
+
+# Customers
+#GET         /customer/:hbid                controllers.UserController.getCustomerByHbid(hbid)
+GET         /customer/:slug                 controllers.UserController.getCustomerBySlug(slug)
+POST        /customer                       controllers.UserController.insertCustomer()
+
+
+# Stylists
+#GET         /stylist/:hbid                 controllers.UserController.getStylistByHbid(hbid)
+GET         /stylist/:slug                  controllers.UserController.getStylistBySlug(slug)
+
+GET         /test/stylist                   controllers.UserController.testStylistFind()

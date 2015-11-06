@@ -27,10 +27,10 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
 
-libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5"
-
-libraryDependencies +=  "org.scalaj" %% "scalaj-http" % "1.1.5"
-
-libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5"
-
-libraryDependencies +=  "org.scalaj" %% "scalaj-http" % "1.1.5"
+libraryDependencies ++= Seq(
+  "org.apache.httpcomponents" % "httpclient" % "4.5",
+  "org.scalaj" %% "scalaj-http" % "1.1.5",
+  "org.apache.httpcomponents" % "httpclient" % "4.5",
+  "org.scalaj" %% "scalaj-http" % "1.1.5",
+	"org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24"
+  )
