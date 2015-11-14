@@ -22,5 +22,3 @@ POST        /customer                       controllers.UserController.insertCus
 # Stylists
 #GET         /stylist/:hbid                 controllers.UserController.getStylistByHbid(hbid)
 GET         /stylist/:slug                  controllers.UserController.getStylistBySlug(slug)
-
-GET         /test/stylist                   controllers.UserController.testStylistFind()
