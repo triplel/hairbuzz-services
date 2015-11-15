@@ -8,8 +8,8 @@ import play.api.libs.functional.syntax._
 /**
 	* Created by lli on 11/6/15.
 	*/
-case class Customer(hbid: String, slug: String, first_name: String, last_name: String, device_id: String, gender: String,
-                    avatar: String, phone: String, email: String, social_networks: SocialNetwroks, registered: Boolean)
+case class Customer(hbid: String, slug: String, display_name: String, first_name: String, last_name: String, device_id: String, gender: String,
+										avatar: String, phone: String, email: String, social_networks: SocialNetworks, registered: Boolean)
 
 object Customer {
 	implicit object CustomerWrites extends OWrites[Customer] {
@@ -17,6 +17,7 @@ object Customer {
 		def writes(customer: Customer): JsObject = Json.obj(
 			"hbid" -> customer.hbid,
 			"slug" -> customer.slug,
+			"display_name" -> customer.display_name,
 			"first_name" -> customer.first_name,
 			"last_name" -> customer.last_name,
 			"device_id" -> customer.device_id,

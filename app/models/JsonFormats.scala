@@ -13,6 +13,6 @@ object JsonFormats {
 	import play.api.data._
 	import play.api.data.Forms._
 
-		implicit val socialNetworksFormat = Json.format[SocialNetwroks]
+		implicit val socialNetworksFormat = Json.format[SocialNetworks]
 		implicit val customerFormat = Json.format[Customer]
 }

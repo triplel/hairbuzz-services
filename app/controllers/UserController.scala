@@ -6,7 +6,7 @@ import models.Customer
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONDocument
 import reactivemongo.core.errors.DatabaseException
-import utils.{PostUserDataHelper, SearchClient, SearchDataHelper}
+import utils._
 import models._
 import models.JsonFormats._
 
@@ -17,8 +17,7 @@ import play.api.mvc.{BodyParsers, Action, Controller}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json._
 
-import scala.util.{ Failure, Success }
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Random, Failure, Success}
 
 // Reactive Mongo imports
 import reactivemongo.api.Cursor
@@ -39,12 +38,9 @@ import play.modules.reactivemongo.json.collection._
   */
 class UserController @Inject() (val reactiveMongoApi: ReactiveMongoApi) extends Controller
 with MongoController with ReactiveMongoComponents {
-
   private val logger = Logger.underlyingLogger
-
   def stylist_collection: JSONCollection = db.collection[JSONCollection]("stylists")
   def customer_collection: JSONCollection = db.collection[JSONCollection]("customers")
-
   def findCustomer(customer: Customer): Future[Option[Customer]] = Future.successful(Option(customer))
 
   def getCustomerByHbid(hbid: String) = Action {
@@ -76,6 +72,8 @@ with MongoController with ReactiveMongoComponents {
       find(Json.obj("slug" -> slug)).
       cursor[JsObject]
     // gather all the JsObjects in a list
+
+    //todo - create stylist case class and object
     val futurePersonsList: Future[List[JsObject]] = cursor.collect[List]()
     // transform the list into a JsArray
     val futurePersonsJsonArray: Future[JsArray] =
@@ -86,15 +84,22 @@ with MongoController with ReactiveMongoComponents {
   }
 
   def insertCustomer = Action.async(parse.json) { request =>
-    request.body.validate[PostUserDataHelper.Customer].map { customer =>
-      customer_collection.insert(customer).map { lastError =>
+    request.body.validate[PostUserDataHelper.CustomerInput].map { customerInput =>
+      //fixme - obviously not an elegant solution, will implement incremental ids in mongo
+      def generateHbid: String = s"C${Random.nextInt(99999)}${Random.nextInt(99999)}";
+      def generateSlug: String = Slug.slugify(s"${customerInput.first_name} ${customerInput.last_name} ${Random.nextInt(99999)}${Random.nextInt(99999)}")
+      val customerSNS = customerInput.social_networks
+      val customerObject = new Customer(generateHbid, generateSlug, customerInput.display_name,customerInput.first_name,customerInput.last_name, customerInput.device_id, customerInput.gender,
+      customerInput.avatar, customerInput.phone, customerInput.email, new SocialNetworks(customerSNS.facebook_username, customerSNS.twitter_username,
+        customerSNS.instagram_username, customerSNS.tumblr_username, customerSNS.google_username), customerInput.registered)
+      customer_collection.insert(customerObject).map { lastError =>
         logger.debug(s"Successfully inserted with LastError: $lastError")
-        logger.info(s"Customer inserted! (name:${customer.first_name} ${customer.last_name} email:${customer.email} slug:${customer.display_name})")
-        Created(Json.obj("status" -> "success", "message" -> s"Customer inserted! (name:${customer.first_name} ${customer.last_name} email:${customer.email} slug:${customer.display_name})"))
+        logger.info(s"Customer inserted! (name:${customerObject.first_name} ${customerObject.last_name} email:${customerObject.email} slug:${customerObject.slug})")
+        Created(Json.obj("status" -> "success", "hbid" -> customerObject.hbid, "slug" -> customerObject.slug))
       }.recover{
         case dbe: DatabaseException => {
           logger.info(dbe.getMessage())
-          logger.debug(dbe.getStackTraceString)
+          logger.debug(dbe.getStackTrace.toString)
           //todo
           if (dbe.code.get == 11001 || dbe.code.get == 11000){
             Conflict(dbe.getMessage())
@@ -105,11 +110,11 @@ with MongoController with ReactiveMongoComponents {
         }
         case e: Exception => {
           logger.info(e.getMessage())
-          logger.debug(e.getStackTraceString)
+          logger.debug(e.getStackTrace.toString)
           InternalServerError(e.getMessage())
         }
         case _ => {
-          InternalServerError("An unknown exception occcurred")
+          InternalServerError("An exception occurred")
         }
       }
     }.getOrElse(Future.successful(BadRequest("invalid json for customer")))
