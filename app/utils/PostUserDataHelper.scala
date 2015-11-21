@@ -21,8 +21,8 @@ object PostUserDataHelper {
 
   case class SocialNetwroks(facebook_username: String, twitter_username: String, instagram_username: String,
                             tumblr_username: String, google_username: String)
-  case class Customer(display_name: String, first_name: String, last_name: String, device_id: String, gender: String,
-                     avatar: String, phone: String, email: String, social_networks: SocialNetwroks, registered: Boolean)
+  case class CustomerInput(display_name: String, first_name: String, last_name: String, device_id: String, gender: String,
+                           avatar: String, phone: String, email: String, social_networks: SocialNetwroks, registered: Boolean)
 
   val socialNetwroksReadsBuilder = (JsPath \ "facebook_username").read[String](minLength[String](2)) and
     (JsPath \ "twitter_username").read[String] and
@@ -42,6 +42,6 @@ object PostUserDataHelper {
     (JsPath \ "email").read[String](Reads.email) and
     (JsPath \ "social_networks").read[SocialNetwroks] and
     (JsPath \ "registered").read[Boolean]
-  implicit val customerReads: Reads[Customer] = customerReadsBuilder.apply(Customer.apply _)
-	implicit val customerJsonWrites = Json.writes[Customer]
+  implicit val customerReads: Reads[CustomerInput] = customerReadsBuilder.apply(CustomerInput.apply _)
+	implicit val customerJsonWrites = Json.writes[CustomerInput]
 }

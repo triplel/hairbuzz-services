@@ -32,5 +32,6 @@ libraryDependencies ++= Seq(
   "org.scalaj" %% "scalaj-http" % "1.1.5",
   "org.apache.httpcomponents" % "httpclient" % "4.5",
   "org.scalaj" %% "scalaj-http" % "1.1.5",
-	"org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24"
-  )
+	"org.reactivemongo" %% "play2-reactivemongo" % "0.11.7.play24",
+  "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test"
+)
