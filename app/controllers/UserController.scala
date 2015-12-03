@@ -87,7 +87,7 @@ with MongoController with ReactiveMongoComponents {
     request.body.validate[PostUserDataHelper.CustomerInput].map { customerInput =>
       //fixme - obviously not an elegant solution, will implement incremental ids in mongo
       def generateHbid: String = s"C${Random.nextInt(99999)}${Random.nextInt(99999)}";
-      def generateSlug: String = Slug.slugify(s"${customerInput.first_name} ${customerInput.last_name} ${Random.nextInt(99999)}${Random.nextInt(99999)}")
+      def generateSlug: String = SlugHelper.slugify(s"${customerInput.first_name} ${customerInput.last_name} ${Random.nextInt(99999)}${Random.nextInt(99999)}")
       val customerSNS = customerInput.social_networks
       val customerObject = new Customer(generateHbid, generateSlug, customerInput.display_name,customerInput.first_name,customerInput.last_name, customerInput.device_id, customerInput.gender,
       customerInput.avatar, customerInput.phone, customerInput.email, new SocialNetworks(customerSNS.facebook_username, customerSNS.twitter_username,
