@@ -1,4 +1,6 @@
-package models
+package models.entity.user
+
+import models.SocialNetworks
 
 /**
 	* Created by lli on 11/20/15.

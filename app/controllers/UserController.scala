@@ -1,8 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-
-import models.Customer
+import models.entity.user.Customer
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONDocument
 import reactivemongo.core.errors.DatabaseException

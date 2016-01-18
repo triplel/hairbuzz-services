@@ -3,7 +3,7 @@ package controllers
 import play.api.Logger
 import play.api.libs.json.{JsError, Json}
 import play.api.mvc._
-import utils.{SearchClient, SearchDataHelper}
+import utils.{SearchSuggestionHelper, SearchClient, SearchDataHelper}
 
 /**
 	* Created by lli on 11/2/15.
@@ -18,7 +18,7 @@ class SearchController extends Controller {
 		* @return
 		*/
 	def searchVenue() = Action(BodyParsers.parse.json) { request =>
-		val searchInput = request.body.validate[SearchDataHelper.SearchInput]
+		val searchInput = request.body.validate[SearchDataHelper.LiteSearchInput]
 		searchInput.fold(
 			error => {
 				//todo - add logger
@@ -33,7 +33,7 @@ class SearchController extends Controller {
 	}
 
 	def searchStylist() = Action(BodyParsers.parse.json) { request =>
-		val searchInput = request.body.validate[SearchDataHelper.SearchInput]
+		val searchInput = request.body.validate[SearchDataHelper.LiteSearchInput]
 		searchInput.fold(
 			error => {
 				//todo - add logger
@@ -42,6 +42,25 @@ class SearchController extends Controller {
 			input => {
 				//todo - add logger
 				val result = SearchClient.liteSearchStylist(input)
+				Ok(result)
+			}
+		)
+	}
+
+	/**
+		* Lite search for venues, used in venue address quick search (search suggestions)
+		* @return
+    */
+	def searchSuggestVenue() = Action(BodyParsers.parse.json) { request =>
+		val searchInput = request.body.validate[SearchSuggestionHelper.VenueSuggestSearchInput]
+		searchInput.fold(
+			error => {
+				//todo - add logger
+				BadRequest(Json.obj("status" -> "Invalid Input", "message" -> JsError.toFlatJson(error)))
+			},
+			input => {
+				val result = SearchClient.suggestSearchVenue(input)
+				//todo - add logger
 				Ok(result)
 			}
 		)

@@ -1,9 +1,9 @@
 package utils
 
+import models.entity.user.Customer
 import play.api.Logger
 
 import scala.util.{Success, Failure}
-import models.Customer
 import play.api.libs.json.{JsArray, Json, JsObject}
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api.Cursor
