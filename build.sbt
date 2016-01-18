@@ -8,7 +8,7 @@ version := conf.getString("hairbuzz.services.version")
 
 name := """hairbuzz-services"""
 
-version := "1.0-SNAPSHOT"
+version := "0.0.7-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
