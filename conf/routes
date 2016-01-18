@@ -10,14 +10,14 @@ GET         /assets/*file                   controllers.Assets.at(path="/public"
 GET         /                               controllers.Application.index
 
 
-POST        /search/venue                   controllers.SearchController.searchVenue
-POST        /search/stylist                 controllers.SearchController.searchStylist
+#
+# Entity I/O API
+#
 
 # Customers
 #GET         /customer/:hbid                controllers.UserController.getCustomerByHbid(hbid)
 GET         /customer/:slug                 controllers.UserController.getCustomerBySlug(slug)
 POST        /customer                       controllers.UserController.insertCustomer()
-
 
 # Stylists
 #GET         /stylist/:hbid                 controllers.UserController.getStylistByHbid(hbid)
@@ -25,3 +25,16 @@ GET         /stylist/:slug                  controllers.UserController.getStylis
 
 # Venues
 #GET         /venue/:slug
+
+
+
+
+#
+# Search API
+#
+
+POST        /search/venue                   controllers.SearchController.searchVenue
+POST        /search/stylist                 controllers.SearchController.searchStylist
+
+# Search Suggestions
+POST        /search/suggestion/venue        controllers.SearchController.searchSuggestVenue

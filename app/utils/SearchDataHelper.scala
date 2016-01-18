@@ -30,7 +30,7 @@ object SearchDataHelper {
 	 * @param limit number of results to be retrieved
 	 * @param offset pagination on result list
 	 */
-	case class SearchInput(textInput: String, currentCoordinates: CurrentCoordinates, targetLocation: TargetLocation, limit: Int, offset: Int)
+	case class LiteSearchInput(textInput: String, currentCoordinates: CurrentCoordinates, targetLocation: TargetLocation, limit: Int, offset: Int)
 	//implicit reads for input json objects
 	val currentCoordinatesReadsBuilder = (JsPath \ "latitude").read[Double](min(-90.0) keepAnd max(90.0)) and
 		(JsPath \ "longitude").read[Double](min(-180.0) keepAnd max(180.0))
@@ -44,7 +44,7 @@ object SearchDataHelper {
 		(JsPath \ "target_location").read[TargetLocation] and
 		(JsPath \ "limit").read[Int](min(0)) and
 		(JsPath \ "offset").read[Int](min(0))
-	implicit val searchInputReads: Reads[SearchInput] = searchInputReadsBuilder.apply(SearchInput.apply _)
+	implicit val searchInputReads: Reads[LiteSearchInput] = searchInputReadsBuilder.apply(LiteSearchInput.apply _)
 	//implicit writes for input json objects
 	implicit val currentCoordinatesWrites: Writes[CurrentCoordinates] = (
 		(JsPath \ "latitude").write[Double] and (JsPath \ "longitude").write[Double]
@@ -52,11 +52,11 @@ object SearchDataHelper {
 	implicit val targetLocationWrites: Writes[TargetLocation] = (
 		(JsPath \ "neighbourhood").write[String] and (JsPath \ "city").write[String] and (JsPath \ "zip").write[String]
 		)(unlift(TargetLocation.unapply))
-	implicit val searchInputWrites: Writes[SearchInput] = (
+	implicit val searchInputWrites: Writes[LiteSearchInput] = (
 		(JsPath \ "text_input").write[String] and
 			(JsPath \ "current_coordinates").write[CurrentCoordinates] and
 			(JsPath \ "target_location").write[TargetLocation] and
 			(JsPath \ "limit").write[Int] and
 			(JsPath \ "offset").write[Int]
-		)(unlift(SearchInput.unapply))
+		)(unlift(LiteSearchInput.unapply))
 }

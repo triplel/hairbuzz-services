@@ -1,4 +1,4 @@
-package models
+package models.entity.user
 
 /**
 	* Created by lli on 11/20/15.

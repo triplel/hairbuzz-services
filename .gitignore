@@ -14,3 +14,4 @@ dist
 /RUNNING_PID
 /.settings
 *.jar
+*.DS_Store

@@ -3,7 +3,7 @@ package utils
 /**
   * Created by liliangli on 11/17/15.
   */
-object Slug {
+object SlugHelper {
   def apply(input:String) = slugify(input)
 
   def slugify(input: String): String = {

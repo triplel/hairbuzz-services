@@ -1,9 +1,7 @@
-package models
+package models.entity.user
 
-import play.api.data.validation.ValidationError
-import play.api.libs.json.Reads._
-import play.api.libs.json.{OWrites, Json, JsPath, Reads}
-import play.api.libs.functional.syntax._
+import models.SocialNetworks
+import play.api.libs.json.OWrites
 
 /**
 	* Created by lli on 11/6/15.

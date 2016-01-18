@@ -1,5 +1,6 @@
 package models
 
+import models.entity.user.Customer
 import play.api.data.validation.ValidationError
 import play.api.libs.json.{Reads, JsPath}
 import play.api.libs.json.Reads._

@@ -1,9 +1,9 @@
 package utils
 
+import models.entity.user.Customer
 import play.api.Logger
 
 import scala.util.{Success, Failure}
-import models.Customer
 import play.api.libs.json.{JsArray, Json, JsObject}
 import play.modules.reactivemongo.json.collection.JSONCollection
 import reactivemongo.api.Cursor
@@ -53,14 +53,14 @@ object MongoOpsHelper {
   def incrementSlug(slug: String): String = {
     val slugParts = slug.split("-")
     val incrNum = slugParts(2).toInt + 1
-    Slug.slugify(s"${slugParts(0)} ${slugParts(1)} $incrNum")
+    SlugHelper.slugify(s"${slugParts(0)} ${slugParts(1)} $incrNum")
   }
 
   def createCustomerSlug(collection: JSONCollection, customer: CustomerInput): String = {
     //todo - check if first & last name are empty
-    val slugRegex = Slug.slugify(s"${customer.first_name} ${customer.last_name}")
+    val slugRegex = SlugHelper.slugify(s"${customer.first_name} ${customer.last_name}")
     val lastSlugIncr:Int = getLastSlugIncr(collection, slugRegex) + 1
-    Slug.slugify(s"${customer.first_name} ${customer.last_name} $lastSlugIncr")
+    SlugHelper.slugify(s"${customer.first_name} ${customer.last_name} $lastSlugIncr")
 
   }
 }
