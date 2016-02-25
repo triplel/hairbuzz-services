@@ -1,7 +1,7 @@
 package controllers
 
 import javax.inject.Inject
-import models.entity.user.Customer
+import models.entity.user.{Stylist, Customer}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.BSONDocument
 import reactivemongo.core.errors.DatabaseException
@@ -117,6 +117,43 @@ with MongoController with ReactiveMongoComponents {
         }
       }
     }.getOrElse(Future.successful(BadRequest("invalid json for customer")))
+  }
+
+  def insertStylist = Action.async(parse.json) { request =>
+    request.body.validate[PostUserDataHelper.StylistInput].map { stylistInput =>
+      //fixme - obviously not an elegant solution, will implement incremental ids in mongo
+      def generateHbid: String = s"S${Random.nextInt(99999)}${Random.nextInt(99999)}";
+      def generateSlug: String = SlugHelper.slugify(s"${stylistInput.first_name} ${stylistInput.last_name} ${Random.nextInt(99999)}${Random.nextInt(99999)}")
+      val stylistSNS = stylistInput.social_networks
+      val stylistObject = new Stylist(generateHbid, generateSlug, stylistInput.display_name,stylistInput.first_name,stylistInput.last_name, stylistInput.device_id, stylistInput.gender,
+        stylistInput.avatar, stylistInput.phone, stylistInput.email, new SocialNetworks(stylistSNS.facebook_username, stylistSNS.twitter_username,
+          stylistSNS.instagram_username, stylistSNS.tumblr_username, stylistSNS.google_username), stylistInput.venue_hbid, stylistInput.registered)
+      stylist_collection.insert(stylistObject).map { lastError =>
+        logger.debug(s"Successfully inserted with LastError: $lastError")
+        logger.info(s"Stylist inserted! (name:${stylistObject.first_name} ${stylistObject.last_name} email:${stylistObject.email} slug:${stylistObject.slug} venue_hbid:${})")
+        Created(Json.obj("status" -> "success", "hbid" -> stylistObject.hbid, "slug" -> stylistObject.slug))
+      }.recover{
+        case dbe: DatabaseException => {
+          logger.info(dbe.getMessage())
+          logger.debug(dbe.getStackTrace.toString)
+          //todo
+          if (dbe.code.get == 11001 || dbe.code.get == 11000){
+            Conflict(dbe.getMessage())
+          }
+          else{
+            InternalServerError(dbe.getMessage())
+          }
+        }
+        case e: Exception => {
+          logger.info(e.getMessage())
+          logger.debug(e.getStackTrace.toString)
+          InternalServerError(e.getMessage())
+        }
+        case _ => {
+          InternalServerError("An exception occurred")
+        }
+      }
+    }.getOrElse(Future.successful(BadRequest("invalid json for stylist")))
   }
 
   def insertCustomer2() = Action(BodyParsers.parse.json) { request =>

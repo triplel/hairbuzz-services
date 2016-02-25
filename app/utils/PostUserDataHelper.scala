@@ -17,12 +17,14 @@ object PostUserDataHelper {
   //  def onlyNumerical[T](implicit r: Reads[T]): Reads[T] = Reads.filterNot(ValidationError("validate.error.unexpected.value"))((StringUtils.isNumeric(_))[Boolean])
   def notEqual[T](v: T)(implicit r: Reads[T]): Reads[T] = Reads.filterNot(ValidationError("validate.error.unexpected.value", v))(_ == v)
 
-//  case class User(first_name: String, last_name: String, display_name: String, email: String, gender: String)
-
   case class SocialNetwroks(facebook_username: String, twitter_username: String, instagram_username: String,
                             tumblr_username: String, google_username: String)
   case class CustomerInput(display_name: String, first_name: String, last_name: String, device_id: String, gender: String,
                            avatar: String, phone: String, email: String, social_networks: SocialNetwroks, registered: Boolean)
+
+  //todo - add schedule
+  case class StylistInput(display_name: String, first_name: String, last_name: String, device_id: String, gender: String,
+                          avatar: String, phone: String, email: String, social_networks: SocialNetwroks, venue_hbid: String, registered: Boolean)
 
   val socialNetwroksReadsBuilder = (JsPath \ "facebook_username").read[String](minLength[String](2)) and
     (JsPath \ "twitter_username").read[String] and
@@ -44,4 +46,18 @@ object PostUserDataHelper {
     (JsPath \ "registered").read[Boolean]
   implicit val customerReads: Reads[CustomerInput] = customerReadsBuilder.apply(CustomerInput.apply _)
 	implicit val customerJsonWrites = Json.writes[CustomerInput]
+
+  val stylistReadsBuilder = (JsPath \ "display_name").read[String](minLength[String](2)) and
+    (JsPath \ "first_name").read[String](notEqual("")) and
+    (JsPath \ "last_name").read[String](notEqual("")) and
+    (JsPath \ "device_id").read[String](notEqual("")) and
+    (JsPath \ "gender").read[String](notEqual("")) and
+    (JsPath \ "avatar").read[String] and
+    (JsPath \ "phone").read[String] and
+    (JsPath \ "email").read[String](Reads.email) and
+    (JsPath \ "social_networks").read[SocialNetwroks] and
+    (JsPath \ "venue_hbid").read[String](notEqual("")) and
+    (JsPath \ "registered").read[Boolean]
+  implicit val stylistReads: Reads[StylistInput] = stylistReadsBuilder.apply(StylistInput.apply _)
+  implicit val stylistJsonWrites = Json.writes[StylistInput]
 }

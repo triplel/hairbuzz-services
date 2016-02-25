@@ -22,6 +22,7 @@ POST        /customer                       controllers.UserController.insertCus
 # Stylists
 #GET         /stylist/:hbid                 controllers.UserController.getStylistByHbid(hbid)
 GET         /stylist/:slug                  controllers.UserController.getStylistBySlug(slug)
+POST        /stylist                        controllers.UserController.insertStylist()
 
 # Venues
 #GET         /venue/:slug
