@@ -11,6 +11,7 @@ import utils.SearchSuggestionHelper.VenueSuggestSearchInput
 object SearchClient extends HttpClientBase with FormatSearch{
   private val logger = Logger.underlyingLogger
   private val searchMainURL =  play.Play.application().configuration().getString("elasticsearch.main.url")
+  private val DEFAULT_DISTANCE_UNIT = "km"
 
   //todo - use configuration to control dev or prod
   private val devIndex =  play.Play.application().configuration().getString("elasticsearch.dev.index")
@@ -27,6 +28,60 @@ object SearchClient extends HttpClientBase with FormatSearch{
     liteSearch(getURL,searchInput)
   }
 
+  def geoFullTextSearch(searchInput: SearchDataHelper.LiteSearchInput, esIndex: String, esType: String): JsValue = {
+    val esIndex = devIndex
+    val esType = devStylistType
+    val url = s"$searchMainURL/$esIndex/$esType/_search"
+    val postJson = Json.obj(
+      "query" -> Json.obj(
+        "filtered" -> Json.obj(
+          "query" -> Json.obj(
+            "match" -> Json.obj(
+              "_all" -> searchInput.textInput
+            )
+          ),
+          "filter" -> Json.obj(
+            "geo_distance" -> Json.obj(
+              "distance" -> s"${searchInput.radius}$DEFAULT_DISTANCE_UNIT",
+              "coordinates" -> Json.obj(
+                "lat" -> searchInput.coordinates.latitude,
+                "lon" -> searchInput.coordinates.longitude
+              )
+            )
+          )
+        )
+      ),
+      "size" -> searchInput.limit,
+      "from" -> searchInput.offset
+      )
+    try {
+      val results = makePostJsonRequest(url, postJson).body
+      val responseJson = Json.parse(results)
+      val total = responseJson.\("hits") \ ("total")
+      val hitsSeq = (responseJson.\("hits") \ ("hits")).as[Seq[JsValue]]
+      val resultSeq = hitsSeq.map(x => x.\("_source").get)
+      val searchResult = Json.obj(
+        "total" -> total.get,
+        "count" -> searchInput.limit,
+        "offset" -> searchInput.offset,
+        "results" -> JsArray(resultSeq)
+      )
+      logger.info(s"${total.get} results found, showing ${searchInput.offset} to ${searchInput.limit + searchInput.offset} ($url)")
+      searchResult
+    } catch {
+      case ce: ConnectException => {
+        logger.info(s"ConnectionException - ${ce.getMessage}")
+        logger.debug(ce.getStackTraceString)
+        connectionExceptionJson
+      }
+      case e: Exception => {
+        logger.info(s"Exception - ${e.getMessage}")
+        logger.debug(e.getStackTraceString)
+        exceptionOccurredJson
+      }
+    }
+  }
+
   /**
     * a lite search for stylists
     * @param searchInput SearchInput object
@@ -34,6 +89,10 @@ object SearchClient extends HttpClientBase with FormatSearch{
     */
   def liteSearchStylist(searchInput: SearchDataHelper.LiteSearchInput): JsValue = {
     liteFullTextSearch(searchInput,devIndex,devStylistType)
+  }
+
+  def geoSearchStylist(searchInput: SearchDataHelper.LiteSearchInput): JsValue = {
+    geoFullTextSearch(searchInput,devIndex,devStylistType)
   }
 
   /**

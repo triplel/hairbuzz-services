@@ -36,6 +36,7 @@ POST        /stylist                        controllers.UserController.insertSty
 
 POST        /search/venue                   controllers.SearchController.searchVenue
 POST        /search/stylist                 controllers.SearchController.searchStylist
+POST        /geosearch/stylist              controllers.SearchController.geoSearchStylist
 
 # Search Suggestions
 POST        /search/suggestion/venue        controllers.SearchController.searchSuggestVenue
