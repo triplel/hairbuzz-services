@@ -41,7 +41,23 @@ class SearchController extends Controller {
 			},
 			input => {
 				//todo - add logger
+				//todo - use geo-filter
 				val result = SearchClient.liteSearchStylist(input)
+				Ok(result)
+			}
+		)
+	}
+
+	def geoSearchStylist() = Action(BodyParsers.parse.json) { request =>
+		val searchInput = request.body.validate[SearchDataHelper.LiteSearchInput]
+		searchInput.fold(
+			error => {
+				//todo - add logger
+				BadRequest(Json.obj("status" -> "Invalid Input", "message" -> JsError.toFlatJson(error)))
+			},
+			input => {
+				//todo - add logger
+				val result = SearchClient.geoSearchStylist(input)
 				Ok(result)
 			}
 		)
